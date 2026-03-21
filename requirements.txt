@@ -1,0 +1,7 @@
+click
+httpx
+loguru
+nuitka
+pydantic
+pyyaml
+zstandard
