@@ -1,7 +1,7 @@
 import os.path
 
-import click
 import yaml
+from loguru import logger
 from pydantic import BaseModel, Field
 
 
@@ -11,6 +11,7 @@ class ServerConfig(BaseModel):
 
 
 class AppConfig(BaseModel):
+    initialized: bool = False
     server: ServerConfig = Field(default_factory=ServerConfig)
 
 
@@ -18,7 +19,7 @@ class Config:
     @staticmethod
     def load_or_create(file_path: str) -> AppConfig:
         if not os.path.exists(file_path):
-            click.echo("[*] Creating new configuration file...")
+            logger.info("Creating new configuration file...")
 
             config = AppConfig()
             with open(file_path, "w") as f:

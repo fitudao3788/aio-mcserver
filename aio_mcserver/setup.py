@@ -1,6 +1,7 @@
 import os
 import sys
 
+import yaml
 from loguru import logger
 
 from aio_mcserver.config import AppConfig, Config
@@ -126,3 +127,14 @@ class Setup:
 
                 await viabackwards.cleanup_old_files(self.plugins_dir)
                 await viabackwards.download(self.plugins_dir, download_info)
+
+    async def configure_geysermc(self):
+        geysermc_config_path = os.path.join(self.data_dir, "plugins", "Geyser-Spigot", "config.yml")
+
+        with open(geysermc_config_path, "r") as f:
+            geysermc_config = yaml.safe_load(f)
+
+        geysermc_config["java"]["auth-type"] = "floodgate"
+
+        with open(geysermc_config_path, "w") as f:
+            yaml.dump(geysermc_config, f)
