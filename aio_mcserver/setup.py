@@ -1,8 +1,8 @@
 import os
 import sys
 
-import yaml
 from loguru import logger
+from ruamel.yaml import YAML
 
 from aio_mcserver.config import AppConfig, Config
 from aio_mcserver.downloader.floodgate import Floodgate
@@ -131,8 +131,10 @@ class Setup:
     async def configure_geysermc(self):
         geysermc_config_path = os.path.join(self.data_dir, "plugins", "Geyser-Spigot", "config.yml")
 
+        yaml = YAML()
+
         with open(geysermc_config_path, "r") as f:
-            geysermc_config = yaml.safe_load(f)
+            geysermc_config = yaml.load(f)
 
         geysermc_config["java"]["auth-type"] = "floodgate"
 
