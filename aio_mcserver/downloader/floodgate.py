@@ -11,13 +11,13 @@ class Floodgate(BaseDownloader):
         res_data = res.json()
 
         build_version = res_data["version"]
-        build_id = 0
-        for build in res_data["builds"]:
-            if build_id < build["build"]:
-                build_id = build["build"]
+        build = {"build": 0}
+        for build_candidate in res_data["builds"]:
+            if build["build"] < build_candidate["build"]:
+                build = build_candidate
 
         return {
-            "filename": f"floodgate-spigot-{build_version}-{build_id}.jar",
-            "url": f"https://download.geysermc.org/v2/projects/floodgate/versions/{build_version}/builds/{build_id}/downloads/spigot",
-            "sha256": res_data["builds"][0]["downloads"]["spigot"]["sha256"],
+            "filename": f"floodgate-spigot-{build_version}-{build["build"]}.jar",
+            "url": f"https://download.geysermc.org/v2/projects/floodgate/versions/{build_version}/builds/{build["build"]}/downloads/spigot",
+            "sha256": build["downloads"]["spigot"]["sha256"],
         }
