@@ -1,0 +1,16 @@
+[project]
+name = "aio-mcserver"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "click>=8.3.1",
+    "httpx>=0.28.1",
+    "loguru>=0.7.3",
+    "nuitka>=4.0.7",
+    "pydantic>=2.12.5",
+    "pyyaml>=6.0.3",
+    "ruamel-yaml>=0.19.1",
+    "zstandard>=0.25.0",
+]
