@@ -7,6 +7,7 @@ from ruamel.yaml import YAML
 from aio_mcserver.config import AppConfig, Config
 from aio_mcserver.downloader.floodgate import Floodgate
 from aio_mcserver.downloader.geysermc import GeyserMC
+from aio_mcserver.downloader.mcxboxbroadcast import MCXboxBroadcast
 from aio_mcserver.downloader.paper import Paper
 from aio_mcserver.downloader.viabackwards import ViaBackwards
 from aio_mcserver.downloader.viaversion import ViaVersion
@@ -85,6 +86,21 @@ class Setup:
 
                 await geyser.cleanup_old_files(self.plugins_dir)
                 await geyser.download(self.plugins_dir, download_info)
+
+    async def download_mcxboxbroadcast(self):
+        async with MCXboxBroadcast() as mcxboxbroadcast:
+            logger.info("Checking for MCXboxBroadcast version...")
+
+            download_info = await mcxboxbroadcast.get_download_info()
+
+            logger.debug("Latest MCXboxBroadcast file is {}".format(download_info["filename"]))
+
+            geyser_ext_dir = os.path.join(self.plugins_dir, "Geyser-Spigot", "extensions")
+            if not os.path.exists(os.path.join(geyser_ext_dir, download_info["filename"])):
+                logger.info("Updating MCXboxBroadcast version...")
+
+                await mcxboxbroadcast.cleanup_old_files(geyser_ext_dir)
+                await mcxboxbroadcast.download(geyser_ext_dir, download_info)
 
     async def download_floodgate(self):
         async with Floodgate() as floodgate:

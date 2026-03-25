@@ -24,6 +24,7 @@ async def cli_async(config_path: str):
 
     await setup.download_server()
     await setup.download_geysermc()
+    await setup.download_mcxboxbroadcast()
     await setup.download_floodgate()
     await setup.download_viaversion()
     await setup.download_viabackwards()
@@ -48,4 +49,3 @@ async def cli_async(config_path: str):
 @click.pass_context
 def cli(ctx, config):
     asyncio.run(cli_async(config))
-
