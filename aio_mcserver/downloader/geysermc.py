@@ -11,7 +11,10 @@ class GeyserMC(BaseDownloader):
         res_data = res.json()
 
         build_version = res_data["version"]
-        build_id = res_data["builds"][0]["build"]
+        build_id = 0
+        for build in res_data["builds"]:
+            if build_id < build["build"]:
+                build_id = build["build"]
 
         return {
             "filename": f"Geyser-Spigot-{build_version}-{build_id}.jar",
