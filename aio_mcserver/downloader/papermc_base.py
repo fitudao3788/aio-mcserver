@@ -1,6 +1,7 @@
 import os.path
 
 from aio_mcserver.downloader.base import BaseDownloader
+from aio_mcserver.downloader.download_info import DownloadInfo
 
 
 class PaperMCBase(BaseDownloader):
@@ -26,7 +27,7 @@ class PaperMCBase(BaseDownloader):
 
         return [version["node"]["key"] for version in res_data["data"]["project"]["versions"]["edges"]]
 
-    async def get_download_info(self, full_version: str) -> dict:
+    async def get_download_info(self, full_version: str) -> DownloadInfo:
         res = await self.client.post("https://fill.papermc.io/graphql", json={
             "operationName": "VersionBuilds",
             "query": "query VersionBuilds($projectKey: String!, $versionKey: String!, $after: String) { project(key: $projectKey) { id version(key: $versionKey) { id builds(first: 25, after: $after, orderBy: {direction: DESC}) { edges { node { id number channel createdAt downloads { name size url checksums { sha256 __typename } __typename } commits { sha message __typename } __typename } __typename } pageInfo { hasNextPage hasPreviousPage startCursor endCursor __typename } __typename } __typename } __typename }}",
@@ -37,11 +38,11 @@ class PaperMCBase(BaseDownloader):
         if res_data["data"]["project"]["version"] is None:
             raise ValueError(f"Version {full_version} not found for product {self.product_id}")
 
-        return {
-            "filename": res_data["data"]["project"]["version"]["builds"]["edges"][0]["node"]["downloads"][0]["name"],
-            "url": res_data["data"]["project"]["version"]["builds"]["edges"][0]["node"]["downloads"][0]["url"],
-            "sha256": res_data["data"]["project"]["version"]["builds"]["edges"][0]["node"]["downloads"][0]["checksums"]["sha256"],
-        }
+        return DownloadInfo(
+            filename=res_data["data"]["project"]["version"]["builds"]["edges"][0]["node"]["downloads"][0]["name"],
+            url=res_data["data"]["project"]["version"]["builds"]["edges"][0]["node"]["downloads"][0]["url"],
+            sha256=res_data["data"]["project"]["version"]["builds"]["edges"][0]["node"]["downloads"][0]["checksums"]["sha256"],
+        )
 
     async def get_recommended_flags(self, full_version: str) -> list[str]:
         res = await self.client.post("https://fill.papermc.io/graphql", json={
